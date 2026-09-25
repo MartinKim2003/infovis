@@ -1,35 +1,313 @@
-<!-- Copiá esto dentro de tu archivo tp.html -->
-<section style="max-width: 800px; margin: 0 auto; padding: 20px;">
-    
-    <div class="flourish-embed flourish-scatter" data-src="visualisation/30072464">
-        <script src="https://public.flourish.studio/resources/embed.js"></script>
-        <noscript>
-            <img src="https://public.flourish.studio/visualisation/30072464/thumbnail" width="100%" alt="scatter visualization" />
-        </noscript>
-    </div>
-    <br><br>
-    <div style="min-height:462px" id="datawrapper-vis-tNFiK">
-      <script type="text/javascript" defer src="https://datawrapper.dwcdn.net/tNFiK/embed.js" charset="utf-8" data-target="#datawrapper-vis-tNFiK"></script>
-      <noscript>
-        <img src="https://datawrapper.dwcdn.net/tNFiK/full.png" alt="¿En qué rubro se concentró la mayor parte de mi presupuesto mensual? (Donut Chart)" />
-      </noscript>
-    </div>
-    <br><br>
-    <h2>¿Cómo se distribuyó mi dinero en los locales específicos dentro de cada categoría?</h2>
-    <div style="text-align: center;">
-      <img src="treemap.svg" alt="Distribución de gastos por local" style="max-width: 100%; height: auto;">
-    </div>
-    <br><br>
-    <h2>¿En qué días del mes se produjeron los mayores picos de gasto por categoría?</h2>
-    <div style="text-align: center; width: 100%;">
-      <iframe 
-        title="Gastos Agosto 2026 - Power BI" 
-        width="100%" 
-        height="600" 
-        src="https://app.powerbi.com/view?r=eyJrIjoiZDY1ODZhMjgtOTg5ZS00NTMxLWI1M2MtODdlYjE3NDIxZjFjIiwidCI6ImExZjUwYTk3LTIxYzAtNDlhNy1hOWQ0LWYyNDRlYmI0MmRhNyIsImMiOjR9" 
-        frameborder="0" 
-        allowFullScreen="true">
-      </iframe>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Visualización de Datos Personales — Martín Kim</title>
+<style>
+  :root{
+    --violet: #4a3aa7;
+    --violet-dark: #362a7a;
+    --violet-soft: #efeaff;
+    --ink: #1c1b22;
+    --ink-soft: #5a5866;
+    --bg: #f7f6fb;
+    --card: #ffffff;
+    --border: #e6e3f2;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
+    color: #fff;
+    padding: 64px 24px 72px;
+    text-align: center;
+  }
+  .hero .eyebrow{
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: 12px;
+    opacity: .8;
+    margin-bottom: 12px;
+  }
+  .hero h1{
+    font-size: clamp(28px, 5vw, 42px);
+    margin: 0 0 14px;
+    font-weight: 700;
+  }
+  .hero p{
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 17px;
+    opacity: .92;
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ---------- Intro / About Nuvi ---------- */
+  .intro{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px 36px;
+    margin: -40px auto 48px;
+    box-shadow: 0 12px 30px rgba(74,58,167,0.08);
+    position: relative;
+  }
+  .intro-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background: var(--violet-soft);
+    color: var(--violet);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  .intro-badge .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--violet);
+  }
+  .intro h2{
+    margin: 0 0 12px;
+    font-size: 22px;
+  }
+  .intro p{
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+  }
+  .intro p:last-child{ margin-bottom: 0; }
+  .intro strong{ color: var(--ink); }
+
+  /* ---------- Section ---------- */
+  section.chart-section{
+    margin-bottom: 56px;
+  }
+  .section-head{
+    margin-bottom: 18px;
+  }
+  .section-kicker{
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--violet);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-head h2{
+    margin: 0 0 6px;
+    font-size: 24px;
+  }
+  .section-head .subtitle{
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+  }
+
+  .chart-card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 20px rgba(28,27,34,0.04);
+  }
+  .chart-card svg, .chart-card img{
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+  }
+
+  /* ---------- Placeholder (missing charts) ---------- */
+  .placeholder{
+    background: repeating-linear-gradient(
+      135deg, #fbfaff, #fbfaff 10px, #f3f1fa 10px, #f3f1fa 20px
+    );
+    border: 1.5px dashed #c9c2e6;
+    border-radius: 16px;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .placeholder .icon{
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .placeholder strong{
+    display:block;
+    color: var(--violet);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  footer{
+    text-align: center;
+    padding: 40px 20px 60px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  footer a{ color: var(--violet); text-decoration: none; font-weight: 600; }
+
+  @media (max-width: 600px){
+    .intro{ padding: 24px 20px; margin-top: -28px; }
+    .chart-card{ padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="eyebrow">Infovis · Visualización de Datos Personales</div>
+    <h1>¿En qué se fue mi plata estos dos meses?</h1>
+    <p>Un recorrido visual por mis gastos personales de agosto y septiembre, registrados día a día.</p>
+  </div>
+
+  <div class="wrap">
+
+    <div class="intro">
+      <span class="intro-badge"><span class="dot"></span> Fuente de los datos</span>
+      <h2>Sobre estos datos: Nuvi</h2>
+      <p>
+        Todos los gastos que se muestran a continuación fueron registrados con
+        <strong>Nuvi</strong>, una aplicación para anotar gastos personales. Cada vez que
+        pagaba algo, lo cargaba ahí: el local, la categoría, el monto, la fecha, una
+        puntuación propia sobre la experiencia y si volvería a ir o no.
+      </p>
+      <p>
+        A partir de esa base armé las siguientes visualizaciones, buscando responder
+        preguntas simples: ¿en qué categorías gasté más?, ¿a qué locales volví más seguido?,
+        y ¿hay patrones que no se ven a simple vista revisando la app?
+      </p>
     </div>
 
-</section>
+    <!-- ============ GRÁFICO 1: TREEMAP ============ -->
+    <section class="chart-section">
+      <div class="section-head">
+        <div class="section-kicker">Gráfico 1 · Treemap</div>
+        <h2>¿A qué locales volví más seguido en estos dos meses?</h2>
+        <p class="subtitle">
+          Cada rectángulo es un local; el tamaño representa la cantidad de visitas,
+          agrupadas por categoría de gasto.
+        </p>
+      </div>
+      <div class="chart-card">
+        <!-- SVG del treemap (RAWGraphs + Inkscape) -->
+        <svg width="900" height="600" viewBox="0 0 900 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <rect width="900" height="600" x="2.2547853" y="1.1273926" fill="#ffffff" id="background" />
+          <g transform="translate(10,10)" id="viz">
+            <g id="leaves">
+              <g transform="translate(4,4)"><rect fill="#1f77b4" width="230" height="84" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Ichiban</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">2</tspan></text></g>
+              <g transform="translate(4,90)"><rect fill="#1f77b4" width="230" height="41" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">MdDonalds</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(4,133)"><rect fill="#1f77b4" width="230" height="41" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Bodegon BOCA</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(4,176)"><rect fill="#1f77b4" width="230" height="256" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Asado</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">6</tspan></text></g>
+              <g transform="translate(236,4)"><rect fill="#1f77b4" width="83" height="115" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Franks</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(321,4)"><rect fill="#1f77b4" width="84" height="115" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">KUL</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(407,4)"><rect fill="#1f77b4" width="83" height="115" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">I-Market</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(236,121)"><rect fill="#1f77b4" width="83" height="115" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Lobo</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(321,121)"><rect fill="#1f77b4" width="84" height="115" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">La Percanta</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(407,121)"><rect fill="#1f77b4" width="83" height="115" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Big Pons</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(236,238)"><rect fill="#1f77b4" width="151" height="128" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Poppolo</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">2</tspan></text></g>
+              <g transform="translate(236,368)"><rect fill="#1f77b4" width="151" height="64" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Kansas</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(389,238)"><rect fill="#1f77b4" width="101" height="96" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">DELI</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(389,336)"><rect fill="#1f77b4" width="101" height="96" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Panchos</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(4,438)"><rect fill="#2ca02c" width="486" height="138" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Futbol</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">7</tspan></text></g>
+              <g transform="matrix(1,0,0,0.92817479,496,3.8695545)"><rect fill="#d62728" width="78" height="118" x="0" y="-1.8161519" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Uptown (BAR)</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="matrix(1,0,0,0.91278367,576,3.9472006)"><rect fill="#d62728" width="79" height="118" x="0" y="-0.60538393" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">The Hole (BAR)</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(496.60538,114.91924)"><rect fill="#d62728" width="159" height="58" x="-0.60538393" y="-2.4215357" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">W (BAR)</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(661,4)"><rect fill="#7f7f7f" width="215" height="165.28694" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">DIDI</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">4</tspan></text></g>
+              <g transform="translate(496,188)"><rect fill="#ff7f0e" width="95" height="99" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Starbucks</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(593,188)"><rect fill="#ff7f0e" width="194" height="99" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Barista</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">2</tspan></text></g>
+              <g transform="translate(496,289)"><rect fill="#ff7f0e" width="249" height="156" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Routine</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">4</tspan></text></g>
+              <g transform="translate(496,447)"><rect fill="#ff7f0e" width="249" height="76" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">La Kitchen</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">2</tspan></text></g>
+              <g transform="translate(747,289)"><rect fill="#ff7f0e" width="40" height="234" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">YPF</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(793,188)"><rect fill="#e377c2" width="83" height="110" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Peluqueria</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(793,300)"><rect fill="#e377c2" width="83" height="223" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Barber</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">2</tspan></text></g>
+              <g transform="translate(496,529)"><rect fill="#9467bd" width="187" height="47" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Camiseta Futbol</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+              <g transform="translate(689,529)"><rect fill="#8c564b" width="187" height="47" x="0" y="0" /><text font-family="Arial, sans-serif" font-size="10px" dominant-baseline="text-before-edge"><tspan x="3" y="0.2em" style="font-weight:bold;font-size:10px;fill:#000000">Farmacity</tspan><tspan x="3" y="1.3em" style="font-weight:normal;font-size:10px;fill:#000000">1</tspan></text></g>
+            </g>
+          </g>
+          <text style="font-size:10.7569px;fill:#000000" transform="matrix(0.71797023,0,0,0.7703694,792.28814,191.81405)"><tspan style="font-weight:bold">SERVICIOS = 3</tspan></text>
+          <rect style="fill:none;stroke:#000000;stroke-width:0.807918" width="185.8297" height="46.033024" x="506.02771" y="539.6911" />
+          <rect style="fill:none;stroke:#000000;stroke-width:0.816957" width="186.94804" height="46.787296" x="699.21112" y="539.52435" />
+          <rect style="fill:none;stroke:#000000;stroke-width:2.73643" width="291.00348" height="337.22659" x="506.69299" y="197.4382" />
+          <rect style="fill:none;stroke:#000000;stroke-width:2.24773" width="486.53113" height="136.08951" x="13.976024" y="448.55164" />
+          <rect style="fill:none;stroke:#000000;stroke-width:1.65583" width="215.42137" height="166.79852" x="669.91699" y="13.503163" />
+          <text style="font-size:8.61977px;fill:#000000" transform="matrix(0.89787846,0,0,0.95933683,491.50093,188.84004)"><tspan style="font-weight:bold">CAFE = 10</tspan></text>
+          <rect style="fill:none;stroke:#000000;stroke-width:3.97551" width="484.80338" height="427.23068" x="14.643857" y="13.516466" />
+          <text style="font-size:8px;fill:#000000" transform="translate(-4.5095707,4.5095707)"><tspan style="font-weight:bold">ALIMENTACIÓN = 21</tspan></text>
+          <rect style="fill:none;stroke:#000000;stroke-width:1.4338" width="159.34578" height="167.84555" x="505.45551" y="12.443416" />
+          <text style="font-size:8px;fill:#000000" transform="translate(487.09223,5.2389041)"><tspan style="font-weight:bold">ENTRETENIMIENTO = 3</tspan></text>
+          <text style="font-size:8px;fill:#000000" transform="translate(655.71808,5.4262624)"><tspan style="font-weight:bold">TRANSPORTE = 4</tspan></text>
+          <text style="font-size:8px;fill:#000000" transform="translate(-3.2965392,591.97752)"><tspan style="font-weight:bold">DEPORTES = 7</tspan></text>
+          <rect style="fill:none;stroke:#000000;stroke-width:1.45156" width="82.593315" height="334.32892" x="803.41492" y="197.56972" />
+          <text style="font-size:8px;fill:#000000" transform="translate(488.20851,589.85927)"><tspan style="font-weight:bold">ROPA = 1</tspan></text>
+          <text style="font-size:8px;fill:#000000" transform="translate(681.79465,591.04474)"><tspan style="font-weight:bold">SALUD = 1</tspan></text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ GRÁFICO 2: BAR CHART (FLOURISH) ============ -->
+    <section class="chart-section">
+      <div class="section-head">
+        <div class="section-kicker">Gráfico 2 · Ranking por categoría</div>
+        <h2>¿En qué gasté más estos dos meses?</h2>
+        <p class="subtitle">
+          Alimentación y Servicios concentran cerca del 75% del gasto total.
+        </p>
+      </div>
+      <div class="chart-card">
+        <div class="flourish-embed flourish-chart" data-src="visualisation/30369135"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/30369135/thumbnail" width="100%" alt="chart visualization" /></noscript></div>
+      </div>
+    </section>
+
+    <!-- ============ GRÁFICO 3: DONUT (PENDIENTE) ============ -->
+    <section class="chart-section">
+      <div class="section-head">
+        <div class="section-kicker">Gráfico 3 · Distribución</div>
+        <h2>¿Qué categorías dominan mi gasto?</h2>
+        <p class="subtitle">Próximamente — gráfico de donut hecho en Datawrapper.</p>
+      </div>
+      <div class="placeholder">
+        <div class="icon">◔</div>
+        <strong>En construcción</strong>
+        Este gráfico todavía se está corrigiendo en Datawrapper.
+      </div>
+    </section>
+
+    <!-- ============ GRÁFICO 4: TABLEAU (PENDIENTE) ============ -->
+    <section class="chart-section">
+      <div class="section-head">
+        <div class="section-kicker">Gráfico 4 · Exploración</div>
+        <h2>Explorando mis gastos en profundidad</h2>
+        <p class="subtitle">Próximamente — visualización hecha en Tableau.</p>
+      </div>
+      <div class="placeholder">
+        <div class="icon">▤</div>
+        <strong>En construcción</strong>
+        Este gráfico se está migrando de Power BI a Tableau.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    Trabajo Práctico — Visualización de Datos Personales · Martín Kim · Datos registrados con <a href="#">Nuvi</a>
+  </footer>
+
+</body>
+</html>
